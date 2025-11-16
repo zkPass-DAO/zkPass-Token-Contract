@@ -1,0 +1,16 @@
+# Compiler files
+cache/
+out/
+broadcast/
+artifacts/
+
+# Docs
+docs/
+
+# Dotenv file
+.env
+.env.local
+.env.prod
+.env.dev
+
+.DS_Store
