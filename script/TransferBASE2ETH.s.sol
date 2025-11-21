@@ -12,12 +12,12 @@ contract CrossChainTransferScript is Script {
     address BASE_CONTRACT = vm.envAddress("BASE_CONTRACT"); // BASE
 
     // LayerZero Chain IDs
-    uint32 BSC_CHAIN_EID = uint32(vm.envUint("BSC_CHAIN_EID"));
+    uint32 ETH_CHAIN_EID = uint32(vm.envUint("ETH_CHAIN_EID"));
 
-    address RECEIVER_BSC_ADDRESS = vm.envAddress("RECEIVER_BSC_ADDRESS");
+    address RECEIVER_ETH_ADDRESS = vm.envAddress("RECEIVER_ETH_ADDRESS");
 
     function run() public {
-        console2.log("Transferring BASE to BSC...");
+        console2.log("Transferring BASE to ETH...");
 
         vm.createSelectFork("base");
 
@@ -26,15 +26,15 @@ contract CrossChainTransferScript is Script {
 
         ZKPToken baseContract = ZKPToken(BASE_CONTRACT);
 
-        uint256 amount = 200 * 1e18; // 200 ZKPToken
+        uint256 amount = 400 * 1e18; // 400 ZKPToken
 
         bytes memory extraOptions = OptionsBuilder
             .newOptions()
             .addExecutorLzReceiveOption(200_000, 0);
 
         SendParam memory sendParam = SendParam({
-            dstEid: BSC_CHAIN_EID,
-            to: bytes32(uint256(uint160(RECEIVER_BSC_ADDRESS))),
+            dstEid: ETH_CHAIN_EID,
+            to: bytes32(uint256(uint160(RECEIVER_ETH_ADDRESS))),
             amountLD: amount,
             minAmountLD: (amount * 95) / 100,
             extraOptions: extraOptions,

@@ -19,9 +19,11 @@ remappings = [
 
 [rpc_endpoints]
 # bsc = "https://bsc-dataseed.bnbchain.org"
-bsc = "https://bsc-testnet.bnbchain.org"
+bsc = "https://bsc-testnet-dataseed.bnbchain.org"
 # base = "https://mainnet.base.org"
 base = "https://sepolia.base.org"
+# eth = "https://eth.llamarpc.com"
+eth = "https://eth-sepolia.api.onfinality.io/public"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
 

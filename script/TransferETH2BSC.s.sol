@@ -9,7 +9,7 @@ import {OptionsBuilder} from "@layerzerolabs/oapp-evm/contracts/oapp/libs/Option
 
 contract CrossChainTransferScript is Script {
     using OptionsBuilder for bytes;
-    address BASE_CONTRACT = vm.envAddress("BASE_CONTRACT"); // BASE
+    address ETH_CONTRACT = vm.envAddress("ETH_CONTRACT"); // ETH
 
     // LayerZero Chain IDs
     uint32 BSC_CHAIN_EID = uint32(vm.envUint("BSC_CHAIN_EID"));
@@ -17,14 +17,14 @@ contract CrossChainTransferScript is Script {
     address RECEIVER_BSC_ADDRESS = vm.envAddress("RECEIVER_BSC_ADDRESS");
 
     function run() public {
-        console2.log("Transferring BASE to BSC...");
+        console2.log("Transferring ETH to BSC...");
 
-        vm.createSelectFork("base");
+        vm.createSelectFork("eth");
 
-        uint256 privateKey = vm.envUint("SENDER_BASE_PRIVATE_KEY");
+        uint256 privateKey = vm.envUint("SENDER_ETH_PRIVATE_KEY");
         vm.startBroadcast(privateKey);
 
-        ZKPToken baseContract = ZKPToken(BASE_CONTRACT);
+        ZKPToken ethContract = ZKPToken(ETH_CONTRACT);
 
         uint256 amount = 200 * 1e18; // 200 ZKPToken
 
@@ -42,14 +42,14 @@ contract CrossChainTransferScript is Script {
             oftCmd: ""
         });
 
-        MessagingFee memory estimatedFee = baseContract.quoteSend(
+        MessagingFee memory estimatedFee = ethContract.quoteSend(
             sendParam,
             false
         );
         console2.log("Estimated native fee:", estimatedFee.nativeFee);
         console2.log("Estimated lzToken fee:", estimatedFee.lzTokenFee);
 
-        baseContract.send{value: estimatedFee.nativeFee}(
+        ethContract.send{value: estimatedFee.nativeFee}(
             sendParam,
             estimatedFee,
             payable(vm.addr(privateKey)) // refund address

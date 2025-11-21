@@ -9,32 +9,32 @@ import {OptionsBuilder} from "@layerzerolabs/oapp-evm/contracts/oapp/libs/Option
 
 contract CrossChainTransferScript is Script {
     using OptionsBuilder for bytes;
-    address BASE_CONTRACT = vm.envAddress("BASE_CONTRACT"); // BASE
+    address BSC_CONTRACT = vm.envAddress("BSC_CONTRACT"); // BSC
 
     // LayerZero Chain IDs
-    uint32 BSC_CHAIN_EID = uint32(vm.envUint("BSC_CHAIN_EID"));
+    uint32 ETH_CHAIN_EID = uint32(vm.envUint("ETH_CHAIN_EID"));
 
-    address RECEIVER_BSC_ADDRESS = vm.envAddress("RECEIVER_BSC_ADDRESS");
+    address RECEIVER_ETH_ADDRESS = vm.envAddress("RECEIVER_ETH_ADDRESS");
 
     function run() public {
-        console2.log("Transferring BASE to BSC...");
+        console2.log("Transferring BSC to ETH...");
 
-        vm.createSelectFork("base");
+        vm.createSelectFork("bsc");
 
-        uint256 privateKey = vm.envUint("SENDER_BASE_PRIVATE_KEY");
+        uint256 privateKey = vm.envUint("SENDER_BSC_PRIVATE_KEY");
         vm.startBroadcast(privateKey);
 
-        ZKPToken baseContract = ZKPToken(BASE_CONTRACT);
+        ZKPToken bscContract = ZKPToken(BSC_CONTRACT);
 
-        uint256 amount = 200 * 1e18; // 200 ZKPToken
+        uint256 amount = 800 * 1e18; // 800 ZKPToken
 
         bytes memory extraOptions = OptionsBuilder
             .newOptions()
             .addExecutorLzReceiveOption(200_000, 0);
 
         SendParam memory sendParam = SendParam({
-            dstEid: BSC_CHAIN_EID,
-            to: bytes32(uint256(uint160(RECEIVER_BSC_ADDRESS))),
+            dstEid: ETH_CHAIN_EID,
+            to: bytes32(uint256(uint160(RECEIVER_ETH_ADDRESS))),
             amountLD: amount,
             minAmountLD: (amount * 95) / 100,
             extraOptions: extraOptions,
@@ -42,14 +42,14 @@ contract CrossChainTransferScript is Script {
             oftCmd: ""
         });
 
-        MessagingFee memory estimatedFee = baseContract.quoteSend(
+        MessagingFee memory estimatedFee = bscContract.quoteSend(
             sendParam,
             false
         );
         console2.log("Estimated native fee:", estimatedFee.nativeFee);
         console2.log("Estimated lzToken fee:", estimatedFee.lzTokenFee);
 
-        baseContract.send{value: estimatedFee.nativeFee}(
+        bscContract.send{value: estimatedFee.nativeFee}(
             sendParam,
             estimatedFee,
             payable(vm.addr(privateKey)) // refund address

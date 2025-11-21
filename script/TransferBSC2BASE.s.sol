@@ -9,10 +9,10 @@ import {OptionsBuilder} from "@layerzerolabs/oapp-evm/contracts/oapp/libs/Option
 
 contract CrossChainTransferScript is Script {
     using OptionsBuilder for bytes;
-    address BSC_CONTRACT = vm.envAddress("BSC_CONTRACT_TESTNET"); // BSC
+    address BSC_CONTRACT = vm.envAddress("BSC_CONTRACT"); // BSC
 
     // LayerZero Chain IDs
-    uint32 BASE_CHAIN_ID = uint32(vm.envUint("BASE_CHAIN_ID"));
+    uint32 BASE_CHAIN_EID = uint32(vm.envUint("BASE_CHAIN_EID"));
 
     address RECEIVER_BASE_ADDRESS = vm.envAddress("RECEIVER_BASE_ADDRESS");
 
@@ -33,7 +33,7 @@ contract CrossChainTransferScript is Script {
             .addExecutorLzReceiveOption(200_000, 0);
 
         SendParam memory sendParam = SendParam({
-            dstEid: BASE_CHAIN_ID,
+            dstEid: BASE_CHAIN_EID,
             to: bytes32(uint256(uint160(RECEIVER_BASE_ADDRESS))),
             amountLD: amount,
             minAmountLD: (amount * 95) / 100,

@@ -10,13 +10,7 @@ contract DeployZKPTokenScript is Script {
     address owner;
     Factory fac;
 
-    function run() public {
-        deploy("bsc");
-
-        deploy("base");
-    }
-
-    function deploy(string memory chain) public {
+    function deploy(string memory chain) internal {
         // Setup
         console2.log("Deploying ZKPToken on", chain, "...");
         vm.createSelectFork(chain);
@@ -50,5 +44,11 @@ contract DeployZKPTokenScript is Script {
         console2.log(chain, "ZKPToken deployed at:", address(zkpToken));
 
         vm.stopBroadcast();
+    }
+
+    function run() public {
+        deploy("bsc");
+        deploy("base");
+        deploy("eth");
     }
 }
