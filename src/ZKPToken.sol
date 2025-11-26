@@ -19,7 +19,7 @@ contract ZKPToken is OFT, ERC20Permit, ERC20Votes {
         uint256 supplyCap
     );
 
-    uint256 public immutable SUPPLY_CAP;
+    uint256 public immutable SUPPLY_CAP = 1_000_000_000 * 10 ** 18; // Set on all chains
 
     /// @dev Constructor
     /// @param lzEndpoint The LayerZero endpoint address
@@ -44,15 +44,32 @@ contract ZKPToken is OFT, ERC20Permit, ERC20Votes {
         );
 
         if (block.chainid == mintingChainId) {
-            SUPPLY_CAP = 1_000_000_000 * 10 ** 18;
             // Mint the initial supply to the treasury
             _mint(multiSigTreasury, SUPPLY_CAP);
 
             emit InitialSupplyMinted(multiSigTreasury, SUPPLY_CAP, SUPPLY_CAP);
         }
+    }
 
-        // On other chains, SUPPLY_CAP remains 0 (uninitialized)
-        // Tokens will be minted via cross-chain transfers
+    function _credit(
+        address _to,
+        uint256 _amountLD,
+        uint32 _srcEid
+    ) internal override returns (uint256) {
+        require(_to != address(0), "ZKPToken: cannot bridge to zero address");
+        return super._credit(_to, _amountLD, _srcEid);
+    }
+
+    function _maxSupply() internal view override returns (uint256) {
+        return SUPPLY_CAP;
+    }
+
+    function renounceOwnership() public override {
+        revert("ZKPToken: renouncing ownership is disabled");
+    }
+
+    function invalidatePermit() external {
+        _useNonce(msg.sender);
     }
 
     function _update(
