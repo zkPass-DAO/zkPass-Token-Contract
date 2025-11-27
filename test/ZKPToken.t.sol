@@ -71,7 +71,8 @@ contract ZKPTokenTest is Test {
 
     function test_Constructor_OnOtherChain_NoMinting() public view {
         // Default chainid is not 97
-        assertEq(token.SUPPLY_CAP(), 0);
+        // Supply cap is always set on all chains, but no minting occurs
+        assertEq(token.SUPPLY_CAP(), SUPPLY_CAP);
         assertEq(token.totalSupply(), 0);
         assertEq(token.balanceOf(treasury), 0);
     }
@@ -320,8 +321,9 @@ contract ZKPTokenTest is Test {
         assertEq(token97.SUPPLY_CAP(), SUPPLY_CAP);
     }
 
-    function test_SupplyCap_OnOtherChain_IsZero() public view {
+    function test_SupplyCap_OnOtherChain_IsSet() public view {
         // Default chainid is not 97
-        assertEq(token.SUPPLY_CAP(), 0);
+        // Supply cap is always set on all chains, regardless of minting
+        assertEq(token.SUPPLY_CAP(), SUPPLY_CAP);
     }
 }
